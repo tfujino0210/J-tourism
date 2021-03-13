@@ -2,11 +2,13 @@
 // (I like to use use screaming snake case for imported json)
 // import MY_DATA from './app/data/example.json'
 
-import * as d3 from "d3";
-import {select} from 'd3-selection';
+import {scatter} from './utils';
+import {select, selectAll} from 'd3-selection';
 import {scaleLinear, scaleBand, scaleLog} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
+import {format} from 'd3-format';
 import {transition} from 'd3-transition' ; 
+import {line} from 'd3-shape';
 
 // this command imports the css file, if you remove it your css wont be applied!
 import './main.css';
@@ -114,7 +116,7 @@ function scatter_plot(data) {
      .attr("r", 5)
      .classed("JPN",true);
 
-  d3.select("#start_button")
+  select("#start_button")
      .on("click", function(){
        if(on_off===0){
         svg.selectAll(".JPN")
@@ -188,7 +190,7 @@ function scatter_plot(data) {
       }
      });
 
-     d3.select("#reset_button")
+     select("#reset_button")
      .on("click", function(){
         svg.selectAll(".Others")
            .data(others)
@@ -298,11 +300,11 @@ function horiz_bar_chart(data) {
       return "rgb(0, 0, " + (d["Arrivals"] * 80) + ")";
     });
 
-  d3.select("#to_2013")
+  select("#to_2013")
     .on("click", function(){
        svg.select(".y-axis")
           .call(axisLeft(y.domain(unique(data_2013, "Country/Area"))));
-       d3.selectAll("rect")
+       selectAll("rect")
          .data(data_2013)
          .style("fill", function(d) {
             return "rgb(0, 0, " + (d["Arrivals"]/1000 * 80) + ")";
@@ -313,11 +315,11 @@ function horiz_bar_chart(data) {
           .text("2013")
      });
   
-  d3.select("#to_2016")
+  select("#to_2016")
     .on("click", function(){
         svg.select(".y-axis")
            .call(axisLeft(y.domain(unique(data_2016, "Country/Area"))));
-        d3.selectAll("rect")
+        selectAll("rect")
            .data(data_2016)
            .style("fill", function(d) {
             return "rgb(0, 0, " + (d["Arrivals"]/1000 * 80) + ")";
@@ -329,11 +331,11 @@ function horiz_bar_chart(data) {
       });
   
 
-  d3.select("#to_2019")
+  select("#to_2019")
     .on("click", function(){
       svg.select(".y-axis")
          .call(axisLeft(y.domain(unique(data_2019, "Country/Area"))));
-      d3.selectAll("rect")
+      selectAll("rect")
          .data(data_2019)
          .style("fill", function(d) {
           return "rgb(0, 0, " + (d["Arrivals"]/1000 * 80) + ")";
@@ -344,11 +346,11 @@ function horiz_bar_chart(data) {
          .text("2019")
     });
 
-    d3.select("#to_2010")
+    select("#to_2010")
       .on("click", function(){
       svg.select(".y-axis")
          .call(axisLeft(y.domain(unique(data_2010, "Country/Area"))));
-      d3.selectAll("rect")
+      selectAll("rect")
          .data(data_2010)
          .style("fill", function(d) {
           return "rgb(0, 0, " + (d["Arrivals"] * 80) + ")";
@@ -413,8 +415,7 @@ fetch('./data/jpn_arr_exp.json')
                 .append('g')
                 .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    const axisx = axisBottom(xScale).ticks(5)
-                                    .tickFormat(d3.format("0f"));
+    const axisx = axisBottom(xScale).ticks(5);
     const axisy = axisLeft(yScale).ticks(10);
 
     svg.append("g")
@@ -440,7 +441,7 @@ fetch('./data/jpn_arr_exp.json')
        .attr("font-size", "11pt")
        .text("Internatiol tourist arrivals (Millions)");
   
-    const line = d3.svg.line()
+    const line_ = line()
                   .x(function(d,i){
                      return xScale(d.year);
                   })
@@ -451,7 +452,7 @@ fetch('./data/jpn_arr_exp.json')
     const path = svg.append("path")
                     .attr("fill", "red")
                     .attr("class", "line")
-                    .attr("d", line(data))
+                    .attr("d", line_(data))
                     .style("stroke-width", 2);
 
     const pathLength = path.node().getTotalLength();
@@ -545,11 +546,10 @@ function multi_line_chart(data){
               .append('g')
               .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-  const axisx = axisBottom(xScale).ticks(10)
-                                  .tickFormat(d3.format("0f"));
+  const axisx = axisBottom(xScale).ticks(9);
   const axisy = axisLeft(yScale).ticks(5);
 
-  const tooltip = d3.select("#lines").append("div").attr("class", "tooltip")
+  const tooltip = select("#lines").append("div").attr("class", "tooltip")
                     .style("background-color", "white")
                     .style("border-width", "1px")
                     .style("border-radius", "5px");
@@ -577,9 +577,9 @@ function multi_line_chart(data){
      .attr("font-size", "11pt")
      .text("Internatiol tourist arrivals (Millions)");
   
-  const line = d3.svg.line()
-                     .x(function(d){ return xScale(d.year); })
-                     .y(function(d){ return yScale(d.arrivals); });
+  const line_ = line()
+                 .x(function(d){ return xScale(d.year); })
+                 .y(function(d){ return yScale(d.arrivals); });
   const colorArr = ['blue', '#3498DB', '#2ECC71', '#9B59B6', '#34495e',
                   '#E7A23C', '#652681', '#4E2E2A', '#73261E', "#F08D82", "#5A9A53"];
   const countries = ['Australia', 'Canada', 'France', 'Indonesia', 'Malaysia', 'Philippines', 
@@ -590,13 +590,13 @@ function multi_line_chart(data){
       let country = countries[i];
       svg.append("path")
          .attr("class", "line_c")
-         .attr("d", line(dataset))
+         .attr("d", line_(dataset))
          .attr("stroke", colorArr[i])
          .attr("stroke-width", "3px")
          .attr("fill", "none")
          .attr("style", "pointer-events: auto;")
          .on("mouseover", function() {
-            d3.select(this) 
+            select(this) 
               .style('opacity', 0.3);
             tooltip
               .style("visibility", "visible")
@@ -605,7 +605,7 @@ function multi_line_chart(data){
               .style("left", (d3.event.pageX+300) + "px");        
           })
          .on("mouseout", function() { 
-            d3.select(this)
+            select(this)
               .style('opacity', 1.0)
             tooltip.style("visibility", "hidden");
           });
