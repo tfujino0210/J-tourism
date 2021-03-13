@@ -25,9 +25,9 @@ function scatter_plot(data) {
  
   const Japan = data.slice(21,22);
   const others = data.slice(0,21).concat(data.slice(22,45));
-  const height = 450;
+  const height = 460;
   const width = 540;
-  const margin = {top: 20, bottom: 70, right: 70, left: 90};
+  const margin = {top: 30, bottom: 70, right: 70, left: 90};
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const xDomain = [0, 200];
