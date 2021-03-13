@@ -2,7 +2,7 @@
 // (I like to use use screaming snake case for imported json)
 // import MY_DATA from './app/data/example.json'
 
-import {scatter} from './utils';
+import * as d3 from "d3";
 import {select} from 'd3-selection';
 import {scaleLinear, scaleBand, scaleLog} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
