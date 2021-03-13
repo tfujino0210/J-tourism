@@ -1,0 +1,178 @@
+
+a {
+  cursor: pointer;
+}
+
+html,
+body {
+  background: #ebebe8;
+  font-family: Verdana, Geneva, sans-serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  pointer-events: all;
+}
+
+header{
+  border:none;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 20px;
+  font-size: 11pt;
+}
+
+.largest-container {
+  display: flex;
+  flex-direction: column;
+  border: none;
+  pointer-events: all;
+  margin-bottom: 60px;
+}
+
+.content-0{
+  flex: 1 1 auto;
+  height: 550;
+  display: flex;
+  flex-direction: column;
+  border:none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.comment{
+  font-size: 11pt;
+}
+
+#comment_0{
+  margin:20px
+}
+
+.line {
+  stroke: blue;
+  fill: none;
+  width: 5;
+}
+
+.content-1{
+  flex: 1 1 auto;
+  height: 550;
+  display: flex;
+  flex-direction: column;
+  border:none;
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.button_1{
+  margin-bottom: 0px;
+}
+
+#my_dataviz{
+  margin-top: 0px;
+}
+
+#start_button{
+  margin-left: 65px;
+}
+
+#title_1{
+  font-size: 13pt;
+  text-decoration: underline;
+  margin-left: 80px;
+  margin-top: 20px;
+  margin-bottom: -5px;
+}
+
+#subtitle_1{
+  font-size: 9pt;
+  font-weight: normal;
+  margin-left: 80px;
+}
+
+.content-2{
+  flex: 1 1 auto;
+  height: 550;
+  display: flex;
+  flex-direction: row;
+  border:none;
+  pointer-events: all;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#title_2{
+  font-size: 13pt;
+  text-decoration: underline;
+  margin-left: 110px;
+  margin-top: 20px;
+  margin-bottom: -5px;
+}
+
+#subtitle_2{
+  font-size: 9pt;
+  font-weight: normal;
+  margin-left: 110px;
+}
+
+.button_2{
+  padding: auto;
+  margin-top: 10px;
+}
+#to_2013{
+  margin-left: 100px;
+}
+
+#rank-y-axis{
+  text-anchor: middle;
+  font-size: 11pt;
+  margin-left: 250px;
+  margin-top: -10px;
+}
+
+#source_2{
+  text-anchor: end;
+  font-size: 9pt;
+  margin-left: 350px;
+  margin-top: -5px;
+  text-decoration: underline;
+}
+
+.content-3{
+  flex: 1 1 auto;
+  height: 550px;
+  display: flex;
+  flex-direction: column;
+  border:none;
+  pointer-events: all;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 90px;
+}
+.lines{
+  pointer-events: all;
+}
+.tooltip {
+  position: absolute;
+  width: 140px;
+  height: 60px;
+  text-align: center;
+  font: 6px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#comment_3{
+  margin-top: 70px;
+}
+
+.JPN{
+  fill : red
+}
+
+.Others{
+  fill: darkgrey;
+}
+
+
+
