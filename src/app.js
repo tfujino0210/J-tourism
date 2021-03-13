@@ -24,7 +24,6 @@ fetch('./data/global_arr_exp.json')
 function scatter_plot(data) {
  
   const Japan = data.slice(21,22);
-  console.log(Japan);
   const others = data.slice(0,21).concat(data.slice(22,45));
   const height = 450;
   const width = 540;
@@ -601,8 +600,8 @@ function multi_line_chart(data){
             tooltip
               .style("visibility", "visible")
               .html(country + "<br>2010 : " + dataset[0]["arrivals"].toFixed(2) + " m<br> 2019 : " + dataset[9]["arrivals"].toFixed(2)+ " m")
-              .style("top", (d3.event.pageX+300) + "px")
-              .style("left", (d3.event.pageX+300) + "px");        
+              .style("top", 2100 + "px")
+              .style("left", 470 + "px");        
           })
          .on("mouseout", function() { 
             select(this)
