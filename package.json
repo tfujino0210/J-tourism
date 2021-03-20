@@ -31,9 +31,11 @@
     "d3-axis": "^2.0.0",
     "d3-collection": "^1.0.7",
     "d3-fetch": "^2.0.0",
+    "d3-format": "^2.0.0",
     "d3-scale": "^3.2.3",
     "d3-selection": "^2.0.0",
     "d3-time-format": "^3.0.0",
+    "d3-timer": "^2.0.0",
     "d3-tip": "^0.9.1",
     "d3-transition": "^2.0.0"
   },
