@@ -1,8 +1,3 @@
-// if the data you are going to import is small, then you can import it using es6 import
-// (I like to use use screaming snake case for imported json)
-// import MY_DATA from './app/data/example.json'
-
-import {scatter} from './utils';
 import {select, selectAll} from 'd3-selection';
 import {scaleLinear, scaleBand, scaleLog} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
@@ -13,7 +8,119 @@ import {line} from 'd3-shape';
 // this command imports the css file, if you remove it your css wont be applied!
 import './main.css';
 
-// this is just one example of how to import data. there are lots of ways to do it!
+
+fetch('./data/jpn_arr_exp.json')
+  .then(response => response.json())
+  .then(data => simple_line_chart(data))
+  .catch(e => {
+    console.log(e);
+ });
+
+ function simple_line_chart(data){
+    const height = 400;
+    const width = 650;
+    const margin = {top: 80, bottom: 30, right: 40, left: 80};
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    const xDomain = [1995, 2019];
+    const yDomain = [0, 35];
+    const xScale = scaleLinear()
+                   .domain(xDomain)
+                   .range([0, plotWidth]);
+    const yScale = scaleLinear()
+                   .domain(yDomain)
+                   .range([plotHeight, 0]);
+
+    const svg = select('#line_chart_1')
+                .append('svg')
+                .attr('height', `${height}px`)
+                .attr('width', `${width}px`)
+                .append('g')
+                .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+    const axisx = axisBottom(xScale).ticks(5).tickFormat(format(".4"));
+    const axisy = axisLeft(yScale).ticks(10).tickSize(-plotWidth);
+
+    svg.append("g")
+       .attr("transform", "translate(" + (0) + "," + (height - margin.top - margin.bottom) + ")")
+       .call(axisx)
+       .append("text")
+       .attr("fill", "black")
+       .attr("x", (width - margin.left - margin.right) / 2 )
+       .attr("y", -25)
+ 
+    svg.append("g")
+       .attr("transform", "translate(" + 0 + "," + 0 + ")")
+       .call(axisy)
+       .append("text")
+       .attr("fill", "black")
+       .attr("x", -(height - margin.top - margin.bottom) / 2)
+       .attr("y", -30)
+       .attr("transform", "rotate(-90)")
+       .attr("text-anchor", "middle")
+       .attr("font-size", "11pt")
+       .text("International tourist arrivals (Millions)");
+  
+    const line_ = line()
+                  .x(function(d,i){
+                     return xScale(d.year);
+                  })
+                  .y(function(d,i){
+                     return yScale(d.arrivals);      
+                  });
+
+    const path = svg.append("path")
+                    .attr("fill", "red")
+                    .attr("class", "line")
+                    .attr("d", line_(data))
+                    .style("stroke-width", 2);
+
+    const pathLength = path.node().getTotalLength();
+  
+    path.attr("stroke-dasharray", pathLength + " " + pathLength)
+        .attr("stroke-dashoffset", pathLength)
+        .transition()
+        .duration(4000)
+        .attr("stroke-dashoffset", 0);
+    
+    svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("r", 0)
+        .attr("cx", function(d){
+          return xScale(d["year"]);
+        })
+        .attr("cy", function(d){
+          return yScale(d["arrivals"]);
+        })
+        .attr("fill","blue")
+        .transition()
+        .delay(function(d,i){
+          return 1200+(i*100);
+        })
+        .attr("r", 3);
+
+    // Title
+    svg.append("text")
+        .attr("x", -10)             
+        .attr("y", -35) 
+        .attr("text-anchor", "left")  
+        .style("font-size", "17px") 
+        .style("text-decoration", "underline")
+        .attr("font-weight", "bold")
+        .text("Growing inbound visitors to Japan grew in 2010s.");
+    // Subtitle
+    svg.append("text")
+           .attr("x", -10)    
+           .attr("y", -15) 
+           .attr("text-anchor", "left")  
+           .style("font-size", "12px") 
+           .attr("font-weight", "normal")
+           .text("Inbound travelers marked 32 million arrivals in 2019, which was four-fold of that in 2010.");
+ }
+
+
 fetch('./data/global_arr_exp.json')
   .then(response => response.json())
   .then(data => scatter_plot(data))
@@ -25,20 +132,16 @@ function scatter_plot(data) {
  
   const Japan = data.slice(21,22);
   const others = data.slice(0,21).concat(data.slice(22,45));
-  const height = 460;
+  const height = 440;
   const width = 540;
-  const margin = {top: 30, bottom: 70, right: 70, left: 90};
+  const margin = {top: 30, bottom: 50, right: 70, left: 90};
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const xDomain = [0, 200];
   const yDomain = [0, 200];
 
-  const xScale = scaleLinear()
-    .domain(xDomain)
-    .range([0, plotWidth]);
-  const yScale = scaleLinear()
-    .domain(yDomain)
-    .range([plotHeight, 0]);
+  const xScale = scaleLinear().domain(xDomain).range([0, plotWidth]);
+  const yScale = scaleLinear().domain(yDomain).range([plotHeight, 0]);
   
   const svg = select('#my_dataviz')
              .append('svg')
@@ -72,7 +175,7 @@ function scatter_plot(data) {
      .attr("transform", "rotate(-90)")
      .attr("text-anchor", "middle")
      .attr("font-size", "11pt")
-     .text("Internatiol tourist arrivals (Millions)");
+     .text("International tourist arrivals (Millions)");
   
   svg.append("text")
      .attr("x", 350) 
@@ -82,9 +185,7 @@ function scatter_plot(data) {
      .attr("font-weight", "bold")
      .attr("font-weight", "normal")
      .text("2010")
-     .classed("year",true)
-     ;
-  
+     .classed("year",true);
   
   svg.append("g")
      .selectAll("circle")
@@ -98,8 +199,7 @@ function scatter_plot(data) {
       return yScale(d["Arrivals"][0]/1000);
      })
      .attr("r", 3)
-     .classed("Others",true)
-     ;
+     .classed("Others",true);
   
   svg.append("g")
      .selectAll("circle")
@@ -185,7 +285,6 @@ function scatter_plot(data) {
            .duration(500)
            .text("2019")
            ;
-           
       }
      });
 
@@ -214,36 +313,6 @@ function scatter_plot(data) {
            .text("2010");
         on_off = 0;
      });
-
-
-
-   // Title
-   //svg.append("text")
-   //   .attr("x", -25)             
-   //   .attr("y", -65) 
-   //   .attr("text-anchor", "left")  
-   //   .style("font-size", "16px") 
-   //   .style("text-decoration", "underline")
-   //   .attr("font-weight", "bold")
-   //   .text("Growth of inbound tourism in top 50 countries.");
-   // Subtitle
-   //svg.append("text")
-   //   .attr("x", -25)    
-   //   .attr("y", -45) 
-   //   .attr("text-anchor", "left")  
-   //   .style("font-size", "13px") 
-   //   .attr("font-weight", "normal")
-   //   .text("Japan showed significant growth in 2010s");
-   // Source
-   svg.append("text")
-      .attr("x", 290) 
-      .attr("y", 415) 
-      .attr("text-anchor", "bottom")  
-      .style("font-size", "12px") 
-      .style("text-decoration", "underline")
-      .attr("font-weight", "normal")
-      .text("Source: UNWTO");
-     
 }
 
 function unique(data, key) {
@@ -364,7 +433,7 @@ function horiz_bar_chart(data) {
     // add the x Axis
   svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(axisBottom(x));
+      .call(axisBottom(x).tickSize(-width));
 
     // add the y Axis
   svg.append("g")
@@ -382,138 +451,7 @@ function horiz_bar_chart(data) {
      .text("2010")
      .classed("year_bar",true)
      ;
-
 }
-
-fetch('./data/jpn_arr_exp.json')
-  .then(response => response.json())
-  .then(data => simple_line_chart(data))
-  .catch(e => {
-    console.log(e);
- });
-
- function simple_line_chart(data){
-    const height = 400;
-    const width = 650;
-    const margin = {top: 80, bottom: 50, right: 40, left: 80};
-    const plotWidth = width - margin.left - margin.right;
-    const plotHeight = height - margin.top - margin.bottom;
-    const xDomain = [1995, 2019];
-    const yDomain = [0, 35];
-    const xScale = scaleLinear()
-                   .domain(xDomain)
-                   .range([0, plotWidth]);
-    const yScale = scaleLinear()
-                   .domain(yDomain)
-                   .range([plotHeight, 0]);
-
-    const svg = select('#line_chart_1')
-                .append('svg')
-                .attr('height', `${height}px`)
-                .attr('width', `${width}px`)
-                .append('g')
-                .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
-    const axisx = axisBottom(xScale).ticks(5);
-    const axisy = axisLeft(yScale).ticks(10);
-
-    svg.append("g")
-       .attr("transform", "translate(" + (0) + "," + (height - margin.top - margin.bottom) + ")")
-       .call(axisx)
-       .append("text")
-       .attr("fill", "black")
-       .attr("x", (width - margin.left - margin.right) / 2 )
-       .attr("y", -25)
-       .attr("text-anchor", "middle")
-       .attr("font-size", "10pt")
-       .attr("font-weight", "bold");
- 
-    svg.append("g")
-       .attr("transform", "translate(" + 0 + "," + 0 + ")")
-       .call(axisy)
-       .append("text")
-       .attr("fill", "black")
-       .attr("x", -(height - margin.top - margin.bottom) / 2)
-       .attr("y", -40)
-       .attr("transform", "rotate(-90)")
-       .attr("text-anchor", "middle")
-       .attr("font-size", "11pt")
-       .text("Internatiol tourist arrivals (Millions)");
-  
-    const line_ = line()
-                  .x(function(d,i){
-                     return xScale(d.year);
-                  })
-                  .y(function(d,i){
-                     return yScale(d.arrivals);      
-                  });
-
-    const path = svg.append("path")
-                    .attr("fill", "red")
-                    .attr("class", "line")
-                    .attr("d", line_(data))
-                    .style("stroke-width", 2);
-
-    const pathLength = path.node().getTotalLength();
-  
-    path.attr("stroke-dasharray", pathLength + " " + pathLength)
-        .attr("stroke-dashoffset", pathLength)
-        .transition()
-        .duration(4000)
-        .attr("stroke-dashoffset", 0);
-    
-    svg.selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("r", 0)
-        .attr("cx", function(d){
-          return xScale(d["year"]);
-        })
-        .attr("cy", function(d){
-          return yScale(d["arrivals"]);
-        })
-        .attr("fill","blue")
-        .transition()
-        .delay(function(d,i){
-          return 1200+(i*100);
-        })
-        .attr("r", 3);
-
-    //svg.append("text")
-    //   .attr("x", 1000)             
-    //   .attr("y", 25) 
-    //   .attr("text-anchor", "left")  
-    //   .style("font-size", "12px")
-    //   .text("32 Millions")
-
-    // Title
-    svg.append("text")
-        .attr("x", 0)             
-        .attr("y", -35) 
-        .attr("text-anchor", "left")  
-        .style("font-size", "17px") 
-        .style("text-decoration", "underline")
-        .attr("font-weight", "bold")
-        .text("Growing inbound visitors to Japan grew in 2010s.");
-    // Subtitle
-    svg.append("text")
-           .attr("x", 0)    
-           .attr("y", -15) 
-           .attr("text-anchor", "left")  
-           .style("font-size", "13px") 
-           .attr("font-weight", "normal")
-           .text("The number of inbound travelers in 2019 was four times of that in 2010.");
-    // Source
-    svg.append("text")
-           .attr("x", 250) 
-           .attr("y", 315) 
-           .attr("text-anchor", "bottom")  
-           .style("font-size", "12px") 
-           .style("text-decoration", "underline")
-           .attr("font-weight", "normal")
-           .text("Source: UNWTO (the World Tourism Organization)");
- }
 
 fetch('./data/ranking_from.json')
   .then(response => response.json())
@@ -524,9 +462,9 @@ fetch('./data/ranking_from.json')
 
 function multi_line_chart(data){
 
-  const height = 500;
+  const height = 480;
   const width = 600;
-  const margin = {top: 80, bottom: 50, right: 40, left: 80};
+  const margin = {top: 80, bottom: 30, right: 40, left: 80};
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const xDomain = [2010, 2019];
@@ -545,13 +483,8 @@ function multi_line_chart(data){
               .append('g')
               .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-  const axisx = axisBottom(xScale).ticks(9);
-  const axisy = axisLeft(yScale).ticks(5);
-
-  const tooltip = select("#lines").append("div").attr("class", "tooltip")
-                    .style("background-color", "white")
-                    .style("border-width", "1px")
-                    .style("border-radius", "5px");
+  const axisx = axisBottom(xScale).ticks(9).tickFormat(format(".4"));
+  const axisy = axisLeft(yScale).ticks(5).tickSize(-plotWidth);
 
   svg.append("g")
      .attr("transform", "translate(" + (0) + "," + (height - margin.top - margin.bottom) + ")")
@@ -574,7 +507,8 @@ function multi_line_chart(data){
      .attr("transform", "rotate(-90)")
      .attr("text-anchor", "middle")
      .attr("font-size", "11pt")
-     .text("Internatiol tourist arrivals (Millions)");
+     .classed("axis__y_4", true)
+     .text("International tourist arrivals (Millions)");
   
   const line_ = line()
                  .x(function(d){ return xScale(d.year); })
@@ -583,6 +517,11 @@ function multi_line_chart(data){
                   '#E7A23C', '#652681', '#4E2E2A', '#73261E', "#F08D82", "#5A9A53"];
   const countries = ['Australia', 'Canada', 'France', 'Indonesia', 'Malaysia', 'Philippines', 
                       'Singapore', 'Thailand', 'United Kingdom', 'United States', 'Vietnam']
+  
+  const tooltip_4 = select("#lines").append("div").attr("class", "tooltip_4")
+                  .style("background-color", "white")
+                  .style("border-width", "1px")
+                  .style("border-radius", "5px");
 
   for(var i = 0; i < data.length; i++) {
       let dataset = data[i][countries[i]];
@@ -594,19 +533,19 @@ function multi_line_chart(data){
          .attr("stroke-width", "3px")
          .attr("fill", "none")
          .attr("style", "pointer-events: auto;")
-         .on("mouseover", function() {
+         .on("mouseover", function(event) {
             select(this) 
               .style('opacity', 0.3);
-            tooltip
+            tooltip_4
               .style("visibility", "visible")
               .html(country + "<br>2010 : " + dataset[0]["arrivals"].toFixed(2) + " m<br> 2019 : " + dataset[9]["arrivals"].toFixed(2)+ " m")
-              .style("top", 2100 + "px")
-              .style("left", 470 + "px");        
+              .style("top", `${event.pagey}px`)
+              .style("left", `${event.pagex}px`);        
           })
          .on("mouseout", function() { 
             select(this)
               .style('opacity', 1.0)
-            tooltip.style("visibility", "hidden");
+            tooltip_4.style("visibility", "hidden");
           });
   }
   // Title
@@ -618,7 +557,7 @@ function multi_line_chart(data){
        .style("text-decoration", "underline")
        .attr("font-weight", "bold")
        .text("Don’t forget the growth in tourists from other countries.");
-       //.text("Tourist arrivals from other regions also went up.");
+
    // Subtitle
    svg.append("text")
       .attr("x", -20)    
@@ -635,13 +574,5 @@ function multi_line_chart(data){
       .style("font-size", "12px") 
       .attr("font-weight", "normal")
       .text("(Top 15 countries/areas excluding top 4)");
-   // Source
-   svg.append("text")
-      .attr("x", 250) 
-      .attr("y", 410) 
-      .attr("text-anchor", "bottom")  
-      .style("font-size", "11px") 
-      .style("text-decoration", "underline")
-      .text('Source: Japan National Tourism Organization');
 
 }
